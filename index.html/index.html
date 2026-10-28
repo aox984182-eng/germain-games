@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAGINA GERMAIN GAMES</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #2c1d11;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        img.perfil {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 3px solid #ffc107;
+            object-fit: cover;
+        }
+        .boton {
+            background-color: #ffc107;
+            color: black;
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .boton:active {
+            transform: scale(0.96);
+        }
+        .boton-secundario {
+            background-color: #8d6e63;
+            color: white;
+        }
+        .boton-peligro {
+            background-color: #c62828;
+            color: white;
+            font-size: 14px;
+            padding: 8px 16px;
+            margin-top: 15px;
+        }
+        input {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ffc107;
+            background-color: #1a100a;
+            color: white;
+            text-align: center;
+            margin: 5px;
+            font-size: 16px;
+            width: 80%;
+            max-width: 250px;
+        }
+
+        /* SECCIONES Y MENÚS */
+        .seccion {
+            background-color: #3b2415;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 450px;
+            margin: 20px auto;
+        }
+        .oculto {
+            display: none;
+        }
+        
+        /* Tableros de juego */
+        .tablero-juego {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background-color: #1f120a;
+            border: 2px dashed #6e4629;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        .chocolate {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            touch-action: manipulation;
+        }
+        .chocolate:active {
+            transform: scale(0.8);
+        }
+
+        canvas {
+            background-color: #1a0e08;
+            border-radius: 8px;
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+        }
+
+        /* TABLA DE RANKING */
+        .tabla-ranking {
+            width: 100%;
+            max-width: 450px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #3b2415;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .tabla-ranking th, .tabla-ranking td {
+            padding: 10px;
+            border-bottom: 1px solid #5a3822;
+        }
+        .tabla-ranking th {
+            background-color: #ffc107;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Germain games</h1>
+    <h2>Dueño de la página</h2>
+    
+    <br>
+
+    <!-- Tu fotografía -->
+    <img src="gar.jpeg" alt="Germain" class="perfil">
+
+    <p style="margin-top: 15px; color: #d1c7bd;"> Germain games </p>
+    <p style="margin-top: 15px; color: #d1c7bd;"> Barinas - VENEZUELA </p>
+    
+    <br><p style="margin-top: 15px; color: #d1c7bd;">¡Bienvenidos al imalaya!</p>
+    <p style="margin-top: 15px; color: #d1c7bd;">Página creada con el objetivo de disfrutar al menos con el juego que hice.</p>
+
+    <!-- 1. MENÚ DE SELECCIÓN DE JUEGOS -->
+    <div id="menuJuegos" class="seccion">
+        <h3 style="color: #ffc107; margin-top: 0;">🎮 Selecciona un Minijuego</h3>
+        <p style="font-size: 14px; color: #d1c7bd;">Elige a cuál de los juegos de Germain deseas entrar:</p>
+        
+        <button class="boton" onclick="irAJuego('chocolates')">🍫 Cazador de Chocolates</button>
+        <button class="boton" onclick="irAJuego('gordoCalvo')">🏃 Escapa del Gordo Calvo</button>
+    </div>
+
+    <!-- 2. CONTENEDOR DEL JUEGO DE CHOCOLATES -->
+    <div id="juegoChocolates" class="seccion oculto">
+        <h3 style="color: #ffc107; margin-top: 0;">🍫 Cazador de Chocolates</h3>
+        <p style="font-size: 14px; color: #d1c7bd;">
+            Toca los chocolates rápido.<br>
+            <span style="color:#d7ccc8;">🍫 Negro = 1 Pts</span> | <span style="color:#ffffff; font-weight:bold;">⚪ Blanco = 2 Pts</span>
+        </p>
+        
+        <input type="text" id="nombreJugadorChoco" placeholder="Tu nombre (Ej: Germain)"><br>
+        
+        <div style="display: flex; justify-content: space-around; font-weight: bold; margin-top: 10px;">
+            <p style="font-size: 1.2rem; margin: 5px 0;">Puntos: <span id="contadorPuntosChoco" style="color: #ffc107;">0</span></p>
+            <p style="font-size: 1.2rem; margin: 5px 0;">Tiempo: <span id="tiempoRestanteChoco" style="color: #ffc107;">15</span>s</p>
+        </div>
+
+        <div class="tablero-juego" id="tablero">
+            <p id="mensajeTablero" style="color: #8c7a6b; margin-top: 120px;">Presiona "¡INICIAR JUEGO!" para comenzar</p>
+        </div>
+        
+        <button class="boton" id="btnJugarChoco" onclick="iniciarJuegoChoco()">¡INICIAR JUEGO!</button>
+        <br>
+        <button class="boton boton-secundario" onclick="volverAlMenu()" style="margin-top: 10px; font-size: 14px;">⬅ Volver al Menú</button>
+    </div>
+
+    <!-- 3. CONTENEDOR DEL JUEGO DEL GORDO CALVO -->
+    <div id="juegoGordoCalvo" class="seccion oculto">
+        <h3 style="color: #ffc107; margin-top: 0;">🏃 Escapa del Gordo Calvo</h3>
+        <p style="font-size: 14px; color: #d1c7bd;">Toca la pantalla o presiona ESPACIO para saltar los huecos.</p>
+        
+        <input type="text" id="nombreJugadorGordo" placeholder="Tu nombre (Ej: Germain)"><br>
+        
+        <p style="font-size: 1.2rem; font-weight: bold; margin: 10px 0;">Puntos: <span id="contadorPuntosGordo" style="color: #ffc107;">0</span></p>
+
+        <canvas id="canvasGordo" width="360" height="200"></canvas>
+        
+        <button class="boton" id="btnJugarGordo" onclick="iniciarJuegoGordo()">¡INICIAR CARRERA!</button>
+        <br>
+        <button class="boton boton-secundario" onclick="volverAlMenu()" style="margin-top: 10px; font-size: 14px;">⬅ Volver al Menú</button>
+    </div>
+
+    <!-- ZONA DEL RANKING EN TIEMPO REAL -->
+    <h3 style="color: #ffc107; margin-top: 30px;">🏆 Tabla de Historial y Rankings</h3>
+    <table class="tabla-ranking">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Juego</th>
+                <th>Puntaje</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoRanking">
+            <!-- Los puntajes aparecerán aquí automáticamente -->
+        </tbody>
+    </table>
+
+    <!-- Botón de reinicio protegido con contraseña -->
+    <button class="boton boton-peligro" onclick="reiniciarRanking()">🔄 Reiniciar Ranking (Contraseña)</button>
+
+    <script>
+        // VARIABLES GLOBALES DE CHOCOLATES
+        let puntosChoco = 0;
+        let tiempoChoco = 15;
+        let jugandoChoco = false;
+        let temporizadorJuegoChoco;
+        let temporizadorChoco;
+
+        const chocolateNegroSVG = `
+            <svg viewBox="0 0 64 64" width="100%" height="100%">
+                <rect x="4" y="4" width="56" height="56" rx="8" fill="#5c3214" stroke="#ffc107" stroke-width="2"/>
+                <rect x="10" y="10" width="20" height="20" rx="3" fill="#7a431d"/>
+                <rect x="34" y="10" width="20" height="20" rx="3" fill="#7a431d"/>
+                <rect x="10" y="34" width="20" height="20" rx="3" fill="#7a431d"/>
+                <rect x="34" y="34" width="20" height="20" rx="3" fill="#7a431d"/>
+            </svg>
+        `;
+
+        const chocolateBlancoSVG = `
+            <svg viewBox="0 0 64 64" width="100%" height="100%">
+                <rect x="4" y="4" width="56" height="56" rx="8" fill="#f5e6c8" stroke="#ffc107" stroke-width="2"/>
+                <rect x="10" y="10" width="20" height="20" rx="3" fill="#fff8e7"/>
+                <rect x="34" y="10" width="20" height="20" rx="3" fill="#fff8e7"/>
+                <rect x="10" y="34" width="20" height="20" rx="3" fill="#fff8e7"/>
+                <rect x="34" y="34" width="20" height="20" rx="3" fill="#fff8e7"/>
+            </svg>
+        `;
+
+        // VARIABLES GLOBALES DE EL GORDO CALVO
+        let jugandoGordo = false;
+        let animacionGordoId;
+        let puntosGordo = 0;
+        let nombreGordoActual = "";
+        let canvas = document.getElementById("canvasGordo");
+        let ctx = canvas.getContext("2d");
+
+        let chocolatePlayer = { x: 100, y: 130, w: 25, h: 35, vy: 0, cayendo: false };
+        let gordoCalvo = { x: 15, y: 120, w: 45, h: 45 };
+        let bloques = [];
+        let marcoFrame = 0;
+
+        document.addEventListener("DOMContentLoaded", actualizarTablaRanking);
+
+        // NAVEGACIÓN
+        function irAJuego(nombreJuego) {
+            document.getElementById("menuJuegos").classList.add("oculto");
+            if (nombreJuego === 'chocolates') {
+                document.getElementById("juegoChocolates").classList.remove("oculto");
+            } else if (nombreJuego === 'gordoCalvo') {
+                document.getElementById("juegoGordoCalvo").classList.remove("oculto");
+                prepararCanvasGordo();
+            }
+        }
+
+        function volverAlMenu() {
+            if (jugandoChoco) {
+                jugandoChoco = false;
+                clearInterval(temporizadorJuegoChoco);
+                clearTimeout(temporizadorChoco);
+            }
+            if (jugandoGordo) {
+                jugandoGordo = false;
+                cancelAnimationFrame(animacionGordoId);
+            }
+            document.getElementById("juegoChocolates").classList.add("oculto");
+            document.getElementById("juegoGordoCalvo").classList.add("oculto");
+            document.getElementById("menuJuegos").classList.remove("oculto");
+        }
+
+        // --- CHOCOLATES ---
+        function iniciarJuegoChoco() {
+            const inputNombre = document.getElementById("nombreJugadorChoco");
+            const nombre = inputNombre.value.trim();
+
+            if (!nombre) {
+                alert("¡Por favor escribe tu nombre antes de jugar!");
+                inputNombre.focus();
+                return;
+            }
+
+            if (jugandoChoco) return;
+
+            jugandoChoco = true;
+            puntosChoco = 0;
+            tiempoChoco = 15;
+            document.getElementById("contadorPuntosChoco").innerText = puntosChoco;
+            document.getElementById("tiempoRestanteChoco").innerText = tiempoChoco;
+            document.getElementById("mensajeTablero").style.display = "none";
+            
+            const btn = document.getElementById("btnJugarChoco");
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            inputNombre.disabled = true;
+
+            temporizadorJuegoChoco = setInterval(() => {
+                tiempoChoco--;
+                document.getElementById("tiempoRestanteChoco").innerText = tiempoChoco;
+
+                if (tiempoChoco <= 0) {
+                    finalizarJuegoChoco(nombre);
+                }
+            }, 1000);
+
+            generarChocolate();
+        }
+
+        function generarChocolate() {
+            if (!jugandoChoco) return;
+
+            const tablero = document.getElementById("tablero");
+            const chocolateAnterior = document.getElementById("chocoActual");
+            if (chocolateAnterior) chocolateAnterior.remove();
+
+            const esBlanco = Math.random() < 0.3;
+            const valorPuntos = esBlanco ? 2 : 1;
+
+            const choco = document.createElement("div");
+            choco.id = "chocoActual";
+            choco.className = "chocolate";
+            choco.innerHTML = esBlanco ? chocolateBlancoSVG : chocolateNegroSVG;
+
+            const maxLeft = tablero.clientWidth - 60;
+            const maxTop = tablero.clientHeight - 60;
+            const posX = Math.floor(Math.random() * maxLeft);
+            const posY = Math.floor(Math.random() * maxTop);
+
+            choco.style.left = posX + "px";
+            choco.style.top = posY + "px";
+
+            const capturarChoco = (e) => {
+                e.preventDefault();
+                if (!jugandoChoco) return;
+                
+                puntosChoco += valorPuntos;
+                document.getElementById("contadorPuntosChoco").innerText = puntosChoco;
+                choco.remove();
+                
+                clearTimeout(temporizadorChoco);
+                generarChocolate();
+            };
+
+            choco.addEventListener("touchstart", capturarChoco, { passive: false });
+            choco.addEventListener("mousedown", capturarChoco);
+
+            tablero.appendChild(choco);
+
+            temporizadorChoco = setTimeout(() => {
+                if (jugandoChoco) {
+                    choco.remove();
+                    generarChocolate();
+                }
+            }, 800);
+        }
+
+        function finalizarJuegoChoco(nombre) {
+            jugandoChoco = false;
+            clearInterval(temporizadorJuegoChoco);
+            clearTimeout(temporizadorChoco);
+
+            const tablero = document.getElementById("tablero");
+            tablero.innerHTML = `<p id="mensajeTablero" style="color: #ffc107; margin-top: 120px; font-weight: bold;">¡Tiempo agotado! Lograste ${puntosChoco} puntos 🍫</p>`;
+
+            const btn = document.getElementById("btnJugarChoco");
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.innerText = "¡JUGAR DE NUEVO!";
+
+            document.getElementById("nombreJugadorChoco").disabled = false;
+
+            guardarPuntaje(nombre, "Chocolates", puntosChoco);
+        }
+
+        // --- GORDO CALVO ---
+        function prepararCanvasGordo() {
+            ctx.fillStyle = "#1a0e08";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ffc107";
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("Presiona '¡INICIAR CARRERA!'", canvas.width / 2, canvas.height / 2);
+        }
+
+        function saltarGordo() {
+            if (jugandoGordo && !chocolatePlayer.cayendo) {
+                chocolatePlayer.vy = -9;
+                chocolatePlayer.cayendo = true;
+            }
+        }
+
+        canvas.addEventListener("touchstart", (e) => { e.preventDefault(); saltarGordo(); }, { passive: false });
+        canvas.addEventListener("mousedown", saltarGordo);
+        document.addEventListener("keydown", (e) => {
+            if (e.code === "Space" || e.code === "ArrowUp") saltarGordo();
+        });
+
+        function iniciarJuegoGordo() {
+            const inputNombre = document.getElementById("nombreJugadorGordo");
+            const nombre = inputNombre.value.trim();
+
+            if (!nombre) {
+                alert("¡Por favor escribe tu nombre antes de jugar!");
+                inputNombre.focus();
+                return;
+            }
+
+            nombreGordoActual = nombre;
+            puntosGordo = 0;
+            jugandoGordo = true;
+            marcoFrame = 0;
+
+            document.getElementById("contadorPuntosGordo").innerText = puntosGordo;
+            document.getElementById("btnJugarGordo").disabled = true;
+            inputNombre.disabled = true;
+
+            chocolatePlayer = { x: 100, y: 130, w: 25, h: 35, vy: 0, cayendo: false };
+            gordoCalvo = { x: 15, y: 120, w: 45, h: 45 };
+            bloques = [
+                { x: 0, w: 180 },
+                { x: 220, w: 200 }
+            ];
+
+            bucleJuegoGordo();
+        }
+
+        function bucleJuegoGordo() {
+            if (!jugandoGordo) return;
+
+            marcoFrame++;
+            puntosGordo = Math.floor(marcoFrame / 5);
+            document.getElementById("contadorPuntosGordo").innerText = puntosGordo;
+
+            ctx.fillStyle = "#1a0e08";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < bloques.length; i++) {
+                bloques[i].x -= 3;
+            }
+
+            let ultimoBloque = bloques[bloques.length - 1];
+            if (ultimoBloque.x + ultimoBloque.w < canvas.width + 100) {
+                let hueco = Math.floor(Math.random() * 40) + 45;
+                let anchoNuevo = Math.floor(Math.random() * 150) + 150;
+                bloques.push({ x: ultimoBloque.x + ultimoBloque.w + hueco, w: anchoNuevo });
+            }
+
+            if (bloques[0].x + bloques[0].w < -50) bloques.shift();
+
+            chocolatePlayer.vy += 0.5;
+            chocolatePlayer.y += chocolatePlayer.vy;
+
+            let sobreSuelo = false;
+            for (let b of bloques) {
+                if (chocolatePlayer.x + chocolatePlayer.w > b.x && 
+                    chocolatePlayer.x < b.x + b.w && 
+                    chocolatePlayer.y + chocolatePlayer.h >= 165 && 
+                    chocolatePlayer.y + chocolatePlayer.h <= 175 &&
+                    chocolatePlayer.vy >= 0) {
+                    
+                    sobreSuelo = true;
+                    chocolatePlayer.y = 165 - chocolatePlayer.h;
+                    chocolatePlayer.vy = 0;
+                    chocolatePlayer.cayendo = false;
+                }
+            }
+
+            ctx.fillStyle = "#5c3214";
+            for (let b of bloques) {
+                ctx.fillRect(b.x, 165, b.w, 35);
+                ctx.fillStyle = "#3d210d";
+                ctx.fillRect(b.x, 165, b.w, 5);
+                ctx.fillStyle = "#5c3214";
+            }
+
+            ctx.fillStyle = "#7a431d";
+            ctx.fillRect(chocolatePlayer.x, chocolatePlayer.y, chocolatePlayer.w, chocolatePlayer.h);
+            ctx.strokeStyle = "#ffc107";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(chocolatePlayer.x, chocolatePlayer.y, chocolatePlayer.w, chocolatePlayer.h);
+
+            let gordoY = 165 - gordoCalvo.h;
+            ctx.fillStyle = "#ffdbac";
+            ctx.beginPath();
+            ctx.arc(gordoCalvo.x + 22, gordoY + 15, 18, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "#d32f2f";
+            ctx.fillRect(gordoCalvo.x + 5, gordoY + 25, 35, 20);
+
+            ctx.fillStyle = "#000";
+            ctx.fillRect(gordoCalvo.x + 30, gordoY + 10, 3, 3);
+
+            if (chocolatePlayer.y > canvas.height) {
+                finalizarJuegoGordo("¡Caíste al vacío!");
+                return;
+            }
+
+            animacionGordoId = requestAnimationFrame(bucleJuegoGordo);
+        }
+
+        function finalizarJuegoGordo(motivo) {
+            jugandoGordo = false;
+            cancelAnimationFrame(animacionGordoId);
+
+            ctx.fillStyle = "rgba(0,0,0,0.75)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#ffc107";
+            ctx.font = "bold 18px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("¡GAME OVER!", canvas.width / 2, 80);
+            ctx.fillStyle = "#fff";
+            ctx.font = "14px Arial";
+            ctx.fillText(motivo, canvas.width / 2, 110);
+            ctx.fillText(`Puntaje final: ${puntosGordo}`, canvas.width / 2, 135);
+
+            document.getElementById("btnJugarGordo").disabled = false;
+            document.getElementById("nombreJugadorGordo").disabled = false;
+
+            guardarPuntaje(nombreGordoActual, "Gordo Calvo", puntosGordo);
+        }
+
+        // --- GUARDADO MULTI-JUGADOR E HISTORIAL UNIFICADO ---
+        function guardarPuntaje(nombre, juego, puntaje) {
+            // Cargar lista existente o iniciar un arreglo vacío
+            let ranking = JSON.parse(localStorage.getItem("rankingGermainGames")) || [];
+            
+            // Agregar la nueva partida
+            ranking.push({ nombre: nombre, juego: juego, puntaje: puntaje });
+            
+            // Ordenar de mayor a menor puntaje
+            ranking.sort((a, b) => b.puntaje - a.puntaje);
+            
+            // Guardar hasta los mejores 20 registros
+            if (ranking.length > 20) {
+                ranking = ranking.slice(0, 20);
+            }
+            
+            localStorage.setItem("rankingGermainGames", JSON.stringify(ranking));
+            actualizarTablaRanking();
+        }
+
+        function actualizarTablaRanking() {
+            const cuerpo = document.getElementById("cuerpoRanking");
+            cuerpo.innerHTML = "";
+
+            let ranking = JSON.parse(localStorage.getItem("rankingGermainGames")) || [];
+
+            if (ranking.length === 0) {
+                cuerpo.innerHTML = `<tr><td colspan="4" style="color: #d1c7bd;">Aún no hay registros. ¡Juega una partida!</td></tr>`;
+                return;
+            }
+
+            ranking.forEach((item, index) => {
+                let medalla = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `${index + 1}. `;
+                let fila = `<tr>
+                    <td style="color: #ffc107; font-weight: bold;">${medalla}</td>
+                    <td>${item.nombre}</td>
+                    <td style="font-size: 12px; color: #d1c7bd;">${item.juego}</td>
+                    <td style="font-weight: bold; color: #ffc107;">${item.puntaje}</td>
+                </tr>`;
+                cuerpo.innerHTML += fila;
+            });
+        }
+
+        function reiniciarRanking() {
+            let password = prompt("Introduce la contraseña de administrador para reiniciar el ranking:");
+            
+            if (password === null) return;
+
+            if (password === "germain123") {
+                localStorage.removeItem("rankingGermainGames");
+                actualizarTablaRanking();
+                alert("¡El historial y ranking han sido reiniciados!");
+            } else {
+                alert("❌ Contraseña incorrecta.");
+            }
+        }
+    </script>
+</body>
+</html>
